@@ -111,7 +111,7 @@ def main():
         sorted_negative_sentences = negative_sentence_counts.sort_values('Count', ascending=False)
         most_common_negative_sentences = sorted_negative_sentences['Sentence'].tolist()
 
-        st.header("Most Common Negative Sentences", anchor="negative_sentences")
+        st.header("Most Common Negative Comments", anchor="negative_sentences")
         if not most_common_negative_sentences:
             st.write("No negative sentences found in the selected date range.")
         else:
