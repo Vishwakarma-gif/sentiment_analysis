@@ -55,7 +55,7 @@ def main():
 
     # Main content layout (Centered output)
     st.container()
-    col1, col2 = st.columns([1, 8])
+    col1, col2 = st.columns([1, 6])
     with col1:
         st.image("Logo.jpeg", width=150)
 
@@ -84,7 +84,7 @@ def main():
 
             </style>
             <div class="custom-header">
-                <h2>Fatakpay App Reviews Sentiment Analysis</h2>
+                <h2>Playstore Reviews Analysis</h2>
             </div>
         ''', unsafe_allow_html=True)
 
