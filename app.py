@@ -93,7 +93,7 @@ def main():
         if has_score_column:
             st.write("Average Rating: {:.2f}".format(average_rating))
             if 'score' in Fatakpay_r.columns:
-                st.subheader("Count of Each Rating")
+                st.subheader("Rating")
                 rating_counts = Fatakpay_r['score'].value_counts().reset_index()
                 rating_counts.columns = ['Rating', 'Count']
                 st.table(rating_counts)
