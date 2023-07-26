@@ -18,6 +18,7 @@ def fetch_reviews_data(package_name):
 
     return Fatakpay_r
 
+
 def main():
     st.set_page_config(
         page_title="Fatakpay Reviews Sentiment Analysis",
@@ -34,24 +35,33 @@ def main():
     # Check if the 'score' column exists in Fatakpay_r
     has_score_column = 'score' in Fatakpay_r.columns
 
-    # Calculate sentiment counts
-    sentiment_counts = Fatakpay_r['sentiment'].value_counts()
+    # Sidebar layout (Date range picker and Rating filter)
+    st.sidebar.title("Filters")
+    date_range = st.sidebar.date_input("Select Date Range:", [Fatakpay_r['at'].min().date(), Fatakpay_r['at'].max().date()])
+    if has_score_column:
+        rating_filter = st.sidebar.slider("Select Minimum Rating:", min_value=1, max_value=5, value=1)
+
+    # Filter reviews based on date range and rating
+    filtered_reviews = Fatakpay_r[
+        (Fatakpay_r['at'] >= pd.Timestamp(date_range[0])) &
+        (Fatakpay_r['at'] <= pd.Timestamp(date_range[1])) &
+        (Fatakpay_r['score'] >= rating_filter) if has_score_column else True
+    ]
+
+    # Calculate sentiment counts for the filtered reviews
+    sentiment_counts = filtered_reviews['sentiment'].value_counts()
     positive_count = sentiment_counts.get('Positive', 0)
     negative_count = sentiment_counts.get('Negative', 0)
     neutral_count = sentiment_counts.get('Neutral', 0)
 
-    # Calculate sentiment percentages
-    total_reviews = len(Fatakpay_r)
+    # Calculate sentiment percentages for the filtered reviews
+    total_reviews = len(filtered_reviews)
     positive_sentiment_percentage = (positive_count / total_reviews) * 100
     negative_sentiment_percentage = (negative_count / total_reviews) * 100
     neutral_sentiment_percentage = (neutral_count / total_reviews) * 100
 
-    # Calculate average rating
-    average_rating = Fatakpay_r['score'].mean() if has_score_column else None
-
-    # Sidebar layout (Date range picker)
-    st.sidebar.title("Date Range")
-    date_range = st.sidebar.date_input("Select Date Range:", [Fatakpay_r['at'].min().date(), Fatakpay_r['at'].max().date()])
+    # Calculate average rating for the filtered reviews
+    average_rating = filtered_reviews['score'].mean() if has_score_column else None
 
     # Main content layout (Centered output)
     st.container()
@@ -94,15 +104,12 @@ def main():
             st.write("Average Rating: {:.2f}".format(average_rating))
             if 'score' in Fatakpay_r.columns:
                 st.subheader("Rating")
-                rating_counts = Fatakpay_r['score'].value_counts().reset_index()
+                rating_counts = filtered_reviews['score'].value_counts().reset_index()
                 rating_counts.columns = ['Rating', 'Count']
                 st.table(rating_counts)
         st.write("Positive Sentiment Percentage: {:.2f}%".format(positive_sentiment_percentage))
         st.write("Negative Sentiment Percentage: {:.2f}%".format(negative_sentiment_percentage))
         st.write("Neutral Sentiment Percentage: {:.2f}%".format(neutral_sentiment_percentage))
-
-        # Filter reviews based on date range
-        filtered_reviews = Fatakpay_r[(Fatakpay_r['at'] >= pd.Timestamp(date_range[0])) & (Fatakpay_r['at'] <= pd.Timestamp(date_range[1]))]
 
         # Show most common negative sentences
         negative_df = filtered_reviews[filtered_reviews['sentiment'] == 'Negative']
@@ -113,10 +120,11 @@ def main():
 
         st.header("Most Common Negative Comments", anchor="negative_sentences")
         if not most_common_negative_sentences:
-            st.write("No negative sentences found in the selected date range.")
+            st.write("No negative sentences found in the selected date range and rating.")
         else:
             for i, sentence in enumerate(most_common_negative_sentences[:5], start=1):
                 st.write(f"{i}. {sentence}", anchor=f"sentence_{i}")
+
 
 if __name__ == "__main__":
     main()
