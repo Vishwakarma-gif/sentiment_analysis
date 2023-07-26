@@ -54,11 +54,17 @@ def main():
     negative_count = sentiment_counts.get('Negative', 0)
     neutral_count = sentiment_counts.get('Neutral', 0)
 
-    # Calculate sentiment percentages for the filtered reviews
+    # Check if total_reviews is zero and set sentiment percentages accordingly
     total_reviews = len(filtered_reviews)
-    positive_sentiment_percentage = (positive_count / total_reviews) * 100
-    negative_sentiment_percentage = (negative_count / total_reviews) * 100
-    neutral_sentiment_percentage = (neutral_count / total_reviews) * 100
+    if total_reviews == 0:
+        positive_sentiment_percentage = 0
+        negative_sentiment_percentage = 0
+        neutral_sentiment_percentage = 0
+    else:
+        # Calculate sentiment percentages for the filtered reviews
+        positive_sentiment_percentage = (positive_count / total_reviews) * 100
+        negative_sentiment_percentage = (negative_count / total_reviews) * 100
+        neutral_sentiment_percentage = (neutral_count / total_reviews) * 100
 
     # Calculate average rating for the filtered reviews
     average_rating = filtered_reviews['score'].mean() if has_score_column else None
