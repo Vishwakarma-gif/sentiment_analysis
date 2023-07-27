@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 from textblob import TextBlob
-from google_play_scraper import Sort, reviews_all,reviews
+from google_play_scraper import Sort, reviews_all
 
 
 # Retry decorator with exponential backoff
 def fetch_reviews_data(package_name):
-    review = reviews(package_name, sort=Sort.NEWEST)
+    review = reviews_all(package_name, sort=Sort.NEWEST)
     Fatakpay_r = pd.json_normalize(review)
 
     # Convert the 'at' column to datetime64[ns]
