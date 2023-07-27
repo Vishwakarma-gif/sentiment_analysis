@@ -6,7 +6,7 @@ from google_play_scraper import Sort, reviews_all, reviews
 
 # Retry decorator with exponential backoff
 def fetch_reviews_data(package_name):
-    review1 = reviews_all(package_name, sort=Sort.NEWEST)
+    review1 = reviews(package_name, sort=Sort.NEWEST)
     Fatakpay_r = pd.json_normalize(review1)
 
     # Convert the 'at' column to datetime64[ns]
